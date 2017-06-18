@@ -23,10 +23,10 @@ int main(int argc,char *argv[])
    struct sockaddr_in fsock, sname;
    struct hostent *hent; /* estructura que guarda el llamado a gethostbyname */
    int s, len;
-   char nombre[MAX_LINE];
+   char mensaje[MAX_LINE];
    char *sl="A1"; 
    if (argc!=2){
-      printf("USO: cliente nombreMaquina_del_Servidor\n");
+      printf("USO: cliente mensajeMaquina_del_Servidor\n");
       exit(1);
    }
    if(!(hent = gethostbyname(argv[1])) ){
@@ -48,12 +48,12 @@ int main(int argc,char *argv[])
       exit(0);
    }
    printf("Arranca el Programa Cliente !!!... Pulse q para salir\n");
-   strcpy(nombre,"conectame");
-   //printf("Escribe tu nombre de Jugador ");
-   //scanf("%s",nombre);
-   //printf("Tu nombre es = %s\n",nombre);
+   strcpy(mensaje,"conectame");
+   //printf("Escribe tu mensaje de Jugador ");
+   //scanf("%s",mensaje);
+   //printf("Tu mensaje es = %s\n",mensaje);
    //Transferencia de datos 
-   if( send(s,nombre,strlen(nombre),0) < strlen(nombre) ){
+   if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
     perror("SEND: ");    
    }
     //printf("Me detengo a recibir la respuesta del servidor...\n");
@@ -64,13 +64,28 @@ int main(int argc,char *argv[])
          exit(0);
      }
    buf[len] = '\0';
-   printf("Respuesta..: %s\n\n",buf);
-   if(strcmp(buf,"CONECTADO")==0){//   
+   printf("Respuesta..: %s\n\n",buf);   
+   if(strcmp(buf,"RECHAZADO")!=0){//
+	   /*//Asignacion de mensaje
+	   strcpy(mensaje,"dmtablero");
+	   //Envio de datos 
+	   if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
+		perror("SEND: ");    
+	   }
+		//Transferencia de datos 
+		if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
+			 perror("RECV: ");
+			 close(s);
+			 exit(0);
+		 }
+	   buf[len] = '\0';
+	   printf("Tablero asignado..: %s\n\n",buf);
+   	      	   	  */
 	   while(1){
 			//Asignacion de mensaje
-		   strcpy(nombre,"yaempiezo");  
+		   strcpy(mensaje,"yaempiezo");  
 		   //Envio de datos 
-		   if( send(s,nombre,strlen(nombre),0) < strlen(nombre) ){
+		   if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
 			perror("SEND: ");    
 		   }			
 			//Transferencia de datos 
@@ -81,12 +96,12 @@ int main(int argc,char *argv[])
 			 }
 		   buf[len] = '\0';
 		   //printf("Respuesta..: %s\n\n",buf);
-		   if(strcmp(buf,"COMIENZAN")==0){//   
+		   if(strcmp(buf,"COMIENZAN")==0){//   			   
 			   while(1){
 					//Asignacion de mensaje
-					strcpy(nombre,"damecarta");  
+					strcpy(mensaje,"damecarta");  
 					//Envio de datos 
-					if( send(s,nombre,strlen(nombre),0) < strlen(nombre) ){
+					if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
 						perror("SEND: ");    
 					}			
 					//Transferencia de datos 
@@ -96,8 +111,8 @@ int main(int argc,char *argv[])
 						exit(0);
 					}
 					buf[len] = '\0';
-					printf("Respuesta..: %s\n\n",buf);
-					sleep(8);
+					printf("Carta lanzada..: %s\n\n",buf);	
+					sleep(6);				
 					if(strcmp(buf,"YAGANARON")==0){//   
 						break;
 					}						

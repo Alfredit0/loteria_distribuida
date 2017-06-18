@@ -18,8 +18,7 @@
 extern int errno;
 //declaracion de las funciones
 void inicializarJuego (int cartas[]);
-
-
+int validarInsertarTablero (int jugadorNo, int *tabJugador1, int *tabJugador2, int *tabJugador3, int *tabJugador4, int *tabJugador5);
 int main()
 {
    struct sockaddr_in lsock,fsock, sname;
@@ -31,14 +30,34 @@ int main()
                MAP_SHARED | MAP_ANONYMOUS, -1, 0);   
    int *bandGanador= mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, 
                MAP_SHARED | MAP_ANONYMOUS, -1, 0);   
-   //Nombres de los jugadores
+ 
+	//Tableros de los jugadores
+	int *tabJugador1= mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, 
+               MAP_SHARED | MAP_ANONYMOUS, -1, 0);   
+	int *tabJugador2= mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, 
+               MAP_SHARED | MAP_ANONYMOUS, -1, 0);   
+     int *tabJugador3= mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, 
+               MAP_SHARED | MAP_ANONYMOUS, -1, 0);     
+	int *tabJugador4= mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, 
+               MAP_SHARED | MAP_ANONYMOUS, -1, 0); 
+	int *tabJugador5= mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, 
+               MAP_SHARED | MAP_ANONYMOUS, -1, 0);                                                 
+    //Nombres de los jugadores
    char nombres[5][30];
-   //Arreglo de las cartas. Utilizadas para validar las mostradas   
-   int cartas[54];
+   //Arreglo de las cartas. Utilizadas para validar las cartas mostradas   
+   int cartas[54];   
+   *tabJugador1=0;
+   *tabJugador2=0;
+   *tabJugador3=0;
+   *tabJugador4=0;
+   *tabJugador5=0;
    //Se inicializa el juego
    inicializarJuego(cartas);
    //Numero de carta (Se generara aleaotrio)
-   int numCarta=1;
+   int numCarta=0;
+   
+   //Numero de tabler
+   int tablero=0;
    printf("El numero de jugadores *Inicializado****  es %d", *numJugadores);
    
    //Creación de socket
@@ -78,9 +97,9 @@ int main()
                exit(1);
             }
             //Aqui imprimo la direccion IP del cliente y el puerto al que esta conectado (el plus)
-            printf("La dirección IP que tiene el cliente es: %s \n",inet_ntoa(fsock.sin_addr));
+           // printf("La dirección IP que tiene el cliente es: %s \n",inet_ntoa(fsock.sin_addr));
             
-            printf("Cadena Recibida: %s\n",buf);
+            //printf("Cadena Recibida: %s\n",buf);
             if(strcmp(buf,"Salir")==0){
                printf("Termina el servicio por decision del Cliente\n");
                close(ss); //Cerrar la conexión
@@ -103,8 +122,11 @@ int main()
 						printf("Un jugador conectado\n");						
 						printf("El numero de jugadores conectados es %d\n", *numJugadores);				
 						printf("Jugador aceptado!!\n\n");
-						strcpy(nombres[*numJugadores],buf);						
-						strcpy(resp,"CONECTADO");
+						//strcpy(nombres[*numJugadores],buf);								
+						tablero = validarInsertarTablero(*numJugadores, &*tabJugador1, &*tabJugador2, &*tabJugador3, &*tabJugador4, &*tabJugador5);				
+						sprintf(resp, "%d",tablero);
+						printf("Tablero asignado %s\n", buf);
+						printf("Tablero del jugador 1..: %d\nTablero del jugador 2..: %d\nTablero del jugador 3..: %d\n", *tabJugador1, *tabJugador2, *tabJugador3);
 
 					}else{								
 					    printf("El numero de jugadores conectados es %d\n", *numJugadores);				
@@ -120,7 +142,7 @@ int main()
 						strcpy(resp,"COMIENZAN");
 
 					}else{		
-						printf("El numero de jugadores conectados es %d", *numJugadores);							
+						//printf("El numero de jugadores conectados es %d", *numJugadores);							
 						strcpy(resp,"FALTANJUG");
 						}				
 			}else{
@@ -144,4 +166,37 @@ void inicializarJuego (int cartas[]){
 		cartas[i]=0;	
 		}
 		
+}
+
+int validarInsertarTablero (int jugadorNo, int *tabJugador1, int *tabJugador2, int *tabJugador3, int *tabJugador4, int *tabJugador5){				
+		int bandera=1;
+		int tableroNo;
+		while(bandera==1){
+			srand (time(NULL));
+			tableroNo= rand () % (10-1+1) + 1;
+			if(tableroNo!=*tabJugador1&&tableroNo!=*tabJugador2&&tableroNo!=*tabJugador3&&tableroNo!=*tabJugador4&&tableroNo!=*tabJugador5){
+				printf("Numero de tablero generado automaticamente...: %d\n", tableroNo);
+				switch(jugadorNo)
+				{
+					case 1:
+						*tabJugador1=tableroNo;
+						break;
+					case 2:
+						*tabJugador2=tableroNo;
+						break;
+
+					case 3:
+						*tabJugador3=tableroNo;
+						break;
+					case 4:
+						*tabJugador4=tableroNo;
+						break;
+					case 5:
+						*tabJugador5=tableroNo;
+						break;
+				}
+				bandera=2;
+			}
+		}
+		return tableroNo;
 }
