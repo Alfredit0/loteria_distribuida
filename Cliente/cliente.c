@@ -25,14 +25,7 @@ int main(int argc,char *argv[])
    int s, len;
    char mensaje[MAX_LINE];
    char *sl="A1"; 
-   if (argc!=2){
-      printf("USO: cliente mensajeMaquina_del_Servidor\n");
-      exit(1);
-   }
-   if(!(hent = gethostbyname(argv[1])) ){
-      perror("GETHOSTBYNAME: ");
-      exit(0);
-   }
+   hent = gethostbyname("localhost");
    //Creación de socket 
    if((s=socket(AF_INET,SOCK_STREAM,0)) < 0) {
       perror("SOCKET: ");
@@ -66,21 +59,6 @@ int main(int argc,char *argv[])
    buf[len] = '\0';
    printf("Respuesta..: %s\n\n",buf);   
    if(strcmp(buf,"RECHAZADO")!=0){//
-	   /*//Asignacion de mensaje
-	   strcpy(mensaje,"dmtablero");
-	   //Envio de datos 
-	   if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
-		perror("SEND: ");    
-	   }
-		//Transferencia de datos 
-		if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
-			 perror("RECV: ");
-			 close(s);
-			 exit(0);
-		 }
-	   buf[len] = '\0';
-	   printf("Tablero asignado..: %s\n\n",buf);
-   	      	   	  */
 	   while(1){
 			//Asignacion de mensaje
 		   strcpy(mensaje,"yaempiezo");  
