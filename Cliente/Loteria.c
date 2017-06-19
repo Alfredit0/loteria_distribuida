@@ -74,7 +74,7 @@ void Principal()
 	botoncerrar=gtk_button_new_with_label("salir");//salir
 	gtk_widget_set_size_request(botoncerrar,200, 70);
 	gtk_fixed_put(GTK_FIXED(contenedor),botoncerrar,710,650);	
-	imagen=gtk_image_new_from_file("inicio.jpg");	
+	imagen=gtk_image_new_from_file("Imagenes/inicio.jpg");	
 	gtk_fixed_put(GTK_FIXED(contenedor),imagen,0,0);
 	g_signal_connect_swapped (G_OBJECT (botoncerrar), "clicked",
                                   G_CALLBACK (gtk_widget_destroy),
@@ -118,7 +118,7 @@ void Ayuda()
 	clic=gtk_image_new_from_file ("clic.gif");
 	gtk_fixed_put (GTK_FIXED(conte),clic,20,505);
 //~ Ponemos la imegen de fondo.
-	img=gtk_image_new_from_file ("ayuda.jpg");
+	img=gtk_image_new_from_file ("Imagenes/ayuda.jpg");
 	gtk_fixed_put (GTK_FIXED(conte),img,0,0);
 
 
@@ -134,7 +134,7 @@ void Desarrolladores()
 	vent = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	//~Inicializamos el contenedor
 	conte=gtk_fixed_new();
-img=gtk_image_new_from_file ("desarrolladores.jpg");
+img=gtk_image_new_from_file ("Imagenes/desarrolladores.jpg");
 	gtk_fixed_put (GTK_FIXED(conte),img,0,0);
 	
 //~Dejamos la ventana de forma estática
@@ -169,7 +169,7 @@ void Instrucciones()
 	
 	
 
-	img=gtk_image_new_from_file ("instrucciones.jpg");
+	img=gtk_image_new_from_file ("Imagenes/instrucciones.jpg");
 	gtk_fixed_put (GTK_FIXED(conte),img,0,0);
 
 	gtk_container_add (GTK_CONTAINER(vent),conte);

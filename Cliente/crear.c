@@ -21,7 +21,7 @@ void Jugar()
   //gtk_widget_hide_all(window);
 
         window_c = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));//Crea la ventana principal
-        gtk_window_set_icon(GTK_WINDOW(window_c), create_pixbuf("icono.jpg"));//coloca el icono del programa
+        gtk_window_set_icon(GTK_WINDOW(window_c), create_pixbuf("Imagenes/icono.jpg"));//coloca el icono del programa
         //Definimos el tamaño de la ventana
 	gtk_widget_set_size_request (window_c,1063, 768);
 	//Deja la ventana estática
@@ -33,7 +33,7 @@ void Jugar()
         gtk_container_add(GTK_CONTAINER(window_c), frame);//se agrega el marco al contenedor
 
 	//se asigna la iimagen de fondo
-	imagen=gtk_image_new_from_file("tablero2.jpg");
+	imagen=gtk_image_new_from_file("Imagenes/tablero2.jpg");
   	gtk_fixed_put(GTK_FIXED(frame),imagen,0,0); 
 	//Creacion del boton de cerrar
         botoncerrar=gtk_button_new_with_label("salir");
@@ -62,7 +62,7 @@ void Reglas_Juego()
 {    
 
         window_c = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));//Crea la ventana principal
-        gtk_window_set_icon(GTK_WINDOW(window_c), create_pixbuf("icono.jpg"));//coloca el icono del programa
+        gtk_window_set_icon(GTK_WINDOW(window_c), create_pixbuf("Imagenes/icono.jpg"));//coloca el icono del programa
         //Definimos el tamaño de la ventana
 	gtk_widget_set_size_request (window_c,572, 650);
 	//Deja la ventana estática
@@ -71,7 +71,7 @@ void Reglas_Juego()
 	gtk_window_set_position(GTK_WINDOW(window_c), GTK_WIN_POS_CENTER);
 	frame=gtk_fixed_new();// Se crea un marco
 	//se asigna la iimagen de fondo
-	imagen=gtk_image_new_from_file("reglas.jpg");
+	imagen=gtk_image_new_from_file("Imagenes/reglas.jpg");
   	gtk_fixed_put(GTK_FIXED(frame),imagen,0,0);
         gtk_container_add(GTK_CONTAINER(window_c), frame);//se agrega el marco al contenedor
   	 
@@ -88,7 +88,7 @@ void AcercaDe()
 {    
 
         window_c = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));//Crea la ventana principal
-        gtk_window_set_icon(GTK_WINDOW(window_c), create_pixbuf("icono.jpg"));//coloca el icono del programa
+        gtk_window_set_icon(GTK_WINDOW(window_c), create_pixbuf("Imagenes/icono.jpg"));//coloca el icono del programa
         //Definimos el tamaño de la ventana
 	gtk_widget_set_size_request (window_c,572, 650);
 	//Deja la ventana estática
