@@ -19,6 +19,8 @@ GtkWidget *window,*vent,*contenedor,*b1,*b2,*b3, *conte,*b1_jugar,*contenedor_ju
 
 PangoFontDescription *font;
 GtkWidget  *swin, *viewport, *table1, *table2,*imagen, *hpaned,*button,*button2,*textview,*imgzoom;
+GtkWidget  *tablero;
+GtkWidget  *carta;
 GtkTextBuffer *buffer;
 char cadena[100];
 GtkTextMark *mark;
