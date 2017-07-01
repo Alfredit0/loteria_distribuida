@@ -7,11 +7,15 @@
 #include <netinet/in.h>
 #include <sys/errno.h>
 #include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #define MAX_LINE 10
 extern int errno;
 char filename[23];	
+
+char filenameM[23];	
 static GtkItemFactoryEntry menu_items[] = {
   
   { "/_Instrucciones",      NULL,         NULL, 0, "<LastBranch>" },
@@ -219,6 +223,39 @@ void Jugar()
 					strcpy(filename,"Imagenes/");
 					strcat(filename,buf);
 					strcat(filename,".jpg");
+					
+					strcpy(filenameM,"Sonidos/");
+					strcat(filenameM,buf);
+					strcat(filenameM,".mp3");
+					
+					
+					pid_t x;      // a special kind of int
+					char kil[20] = "kill -s 9 ";
+			 
+					x = fork();   /* now there's actually two "x"s:
+					if fork succeeds, "x" to the CHILD PROCESS is the return value of fork (0)
+					and "x" to the PARENT PROCESS is the actual system pid of the child process.*/
+							 
+					if (x < 0) {  // just in case fork fails 
+							puts("fork failure");
+							exit(-1);
+					}   
+					
+					else if (x == 0) { // therefore this block will be the child process 
+							execlp("mpg123", "mpg123", "-q", filenameM, 0); 
+					}
+					                   // see GNU docs, "system" also works                
+				/*	else {  printf("from parent: mpg123 is pid %d\nENTER to quit\n", x);
+							sprintf(kil,"%s%d",kil,x);
+							getchar();// wait for user input
+							system(kil);
+							printf("All ");
+					}  
+					*/
+					
+					
+					
+					
 					pixbuf= gdk_pixbuf_new_from_file_at_scale(filename,174,276,TRUE,NULL);
 					carta=gtk_image_new_from_pixbuf(pixbuf);			
 					gtk_fixed_put(GTK_FIXED(frame),carta,600,280);					
