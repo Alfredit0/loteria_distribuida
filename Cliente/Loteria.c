@@ -242,7 +242,7 @@ void Jugar()
 					}   
 					
 					else if (x == 0) { // therefore this block will be the child process 
-							execlp("mpg123", "mpg123", "-q", filenameM, 0); 
+							execlp("mpg123", "mpg123", "-q", filenameM, NULL); 
 					}
 					                   // see GNU docs, "system" also works                
 				/*	else {  printf("from parent: mpg123 is pid %d\nENTER to quit\n", x);
