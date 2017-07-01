@@ -101,8 +101,42 @@ void Principal()
 
 void Jugar()
 {    
-  //gtk_widget_hide_all(window);
-
+   char buf[MAX_LINE];
+   struct sockaddr_in fsock, sname;
+   struct hostent *hent; /* estructura que guarda el llamado a gethostbyname */
+   int s, len;
+   char mensaje[MAX_LINE];
+   char *sl="A1"; 
+   hent = gethostbyname("localhost");
+   //Creación de socket 
+   if((s=socket(AF_INET,SOCK_STREAM,0)) < 0) {
+      perror("SOCKET: ");
+      exit(0);
+   }
+   fsock.sin_family = AF_INET;
+   fsock.sin_addr.s_addr = *(long *) hent->h_addr; /* direccion IP de Maq. Remota */
+   fsock.sin_port = htons(4400); /* puerto de la maq. remota */
+   //Estableciendo conexión 
+   if(connect(s,(struct sockaddr *)&fsock, sizeof(struct sockaddr_in)) == -1){
+      perror("CONNECT: ");
+      close(s);
+      exit(0);
+   }
+   printf("Arranca Ventana de Jugar\n");
+   strcpy(mensaje,"conectame");
+   if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
+    perror("SEND: ");    
+   }
+    //printf("Me detengo a recibir la respuesta del servidor...\n");
+    //Transferencia de datos 
+    if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
+         perror("RECV: ");
+         close(s);
+         exit(0);
+     }
+   buf[len] = '\0';
+   printf("Respuesta..: %s\n\n",buf);  
+      		
         window_c = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));//Crea la ventana principal
         gtk_window_set_icon(GTK_WINDOW(window_c), create_pixbuf("icon.png"));//coloca el icono del programa
         //Definimos el tamaño de la ventana
@@ -128,33 +162,91 @@ void Jugar()
 	boton1=gtk_button_new_with_label("menu");
         gtk_widget_set_size_request(boton1,180,70);
         gtk_fixed_put (GTK_FIXED(frame),boton1,600,600);
-	/*Creacion del boton de ayuda
-	boton2=gtk_button_new_with_label("Ayuda");
-        gtk_widget_set_size_request(boton2,180,70);
-        gtk_fixed_put (GTK_FIXED(frame),boton2,20,50);*/
-        // g_signal_connect(b1, "clicked", G_CALLBACK (Jugar),NULL);
+        
 	g_signal_connect_swapped (G_OBJECT (boton1), "clicked",G_CALLBACK (gtk_widget_destroy),G_OBJECT (GTK_WIDGET(window_c)));
         //g_signal_connect_swapped (G_OBJECT (boton1), "clicked",G_CALLBACK (gtk_widget_show),G_OBJECT (GTK_WIDGET(window)));
         g_signal_connect(botoncerrar, "clicked", G_CALLBACK (destroy),NULL);
-        
+		
+        if(strcmp(buf,"RECHAZADO")!=0){//
+		int cont=0;	
+    
         //tablero asignado 
         strcpy(filename,"Imagenes/tablero");
-        strcat(filename,"1");
+        strcat(filename,buf);
         strcat(filename,".jpg");
-			pixbuf= gdk_pixbuf_new_from_file_at_scale(filename,500,700,TRUE,NULL);
-			tablero=gtk_image_new_from_pixbuf(pixbuf);			
-			gtk_fixed_put(GTK_FIXED(frame),tablero,50,50); 		
-
-        //tablero asignado 
-        strcpy(filename,"Imagenes/");
-        strcat(filename,"14");
-        strcat(filename,".jpg");
-			pixbuf= gdk_pixbuf_new_from_file_at_scale(filename,174,276,TRUE,NULL);
-			carta=gtk_image_new_from_pixbuf(pixbuf);			
-			gtk_fixed_put(GTK_FIXED(frame),carta,600,280);
-			
-    //Mostramos todos los elementos
-	gtk_widget_show_all(GTK_WIDGET(window_c));
+		pixbuf= gdk_pixbuf_new_from_file_at_scale(filename,500,700,TRUE,NULL);
+		tablero=gtk_image_new_from_pixbuf(pixbuf);			
+		gtk_fixed_put(GTK_FIXED(frame),tablero,50,50); 		
+		
+        //Mostramos todos los elementos
+		gtk_widget_show_all(GTK_WIDGET(window_c));
+		
+	   while(1){
+			//Asignacion de mensaje
+		   strcpy(mensaje,"yaempiezo");  
+		   //Envio de datos 
+		   if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
+			perror("SEND: ");    
+		   }			
+			//Transferencia de datos 
+			if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
+				 perror("RECV: ");
+				 close(s);
+				 exit(0);
+			 }
+		   buf[len] = '\0';
+		   
+		   gtk_widget_show_all(GTK_WIDGET(window_c));
+		   //printf("Respuesta..: %s\n\n",buf);
+		   if(strcmp(buf,"COMIENZAN")==0){//   			   
+			   while(1){
+					//Asignacion de mensaje
+					strcpy(mensaje,"damecarta");  
+					//Envio de datos 
+					if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
+						perror("SEND: ");    
+					}			
+					//Transferencia de datos 
+					if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
+						perror("RECV: ");
+						close(s);
+						exit(0);
+					}
+					while(gtk_events_pending()) gtk_main_iteration();
+					buf[len] = '\0';
+					printf("Carta lanzada..: %s\n\n",buf);	
+					//Carta Lanzada 
+					strcpy(filename,"Imagenes/");
+					strcat(filename,buf);
+					strcat(filename,".jpg");
+					pixbuf= gdk_pixbuf_new_from_file_at_scale(filename,174,276,TRUE,NULL);
+					carta=gtk_image_new_from_pixbuf(pixbuf);			
+					gtk_fixed_put(GTK_FIXED(frame),carta,600,280);					
+					gtk_widget_show (carta);
+					sleep(6);					
+					if(strcmp(buf,"YAGANARON")==0){//   
+						break;
+					}						
+				}
+			}else{								
+				while(gtk_events_pending()) gtk_main_iteration();
+				//Esperando a los jugadores
+					strcpy(filename,"Imagenes/");					
+					strcat(filename,"loading.gif");
+					pixbuf= gdk_pixbuf_new_from_file_at_scale(filename,174,276,TRUE,NULL);
+					carta=gtk_image_new_from_pixbuf(pixbuf);			
+					gtk_fixed_put(GTK_FIXED(frame),carta,600,280);
+					gtk_widget_show (carta);
+				}
+		   if(strcmp(buf,"NINGUNAOP")==0){//   
+			break;
+			}		
+			cont++;
+	   }	
+	   
+		}else{
+		printf("Jugador Rechazado!! Intente mas tarde\n\n");	
+		}	
 }
 
 void Ayuda()
