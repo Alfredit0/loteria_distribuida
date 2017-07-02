@@ -164,10 +164,10 @@ int main()
 
         void inicializarJuego (int cartas[]){          
           int aux = 0;
-
+          int i=0;
           srand(time(0));
 
-          for(int i = 0; i < 54; i++){
+          for(i = 0; i < 54; i++){
            aux = (1 + rand() % 54);
 
            int aux2 = 0;
