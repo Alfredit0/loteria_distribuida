@@ -259,8 +259,7 @@ void Jugar()
 					pixbuf= gdk_pixbuf_new_from_file_at_scale(filename,174,276,TRUE,NULL);
 					carta=gtk_image_new_from_pixbuf(pixbuf);			
 					gtk_fixed_put(GTK_FIXED(frame),carta,600,280);					
-					gtk_widget_show (carta);
-					sleep(6);					
+					gtk_widget_show (carta);							
 					if(strcmp(buf,"YAGANARON")==0){//   
 						break;
 					}						
