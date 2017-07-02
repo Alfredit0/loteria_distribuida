@@ -89,11 +89,17 @@ int main(int argc,char *argv[])
 		   			exit(0);
 		   		}
 		   		buf[len] = '\0';
-		   		printf("Carta lanzada..: %s\n\n",buf);			   		
 					if(strcmp(buf,"YAGANARON")==0){//   
 						break;
-					}						
+					}
+					if(strcmp(buf,"TERMINADO")==0){//  
+						printf("El Juego ha TERMINADO no existe Ningun Ganador\n"); 
+						break;
+					}			   		
+					printf("Carta lanzada..: %s\n\n",buf);			   		
+
 				}
+				break;
 			}
 		   if(strcmp(buf,"NINGUNAOP")==0){//   
 		   	break;
