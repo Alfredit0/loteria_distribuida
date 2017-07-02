@@ -36,6 +36,25 @@ GtkWidget *imagen_jugar;
   GtkWidget *botonexpg;
   GtkWidget *botonexpi;
 
+GtkWidget *casilla0;
+GtkWidget *casilla1;
+GtkWidget *casilla2;
+GtkWidget *casilla3;
+GtkWidget *casilla4;
+GtkWidget *casilla5;
+GtkWidget *casilla6;
+GtkWidget *casilla7;
+GtkWidget *casilla8;
+GtkWidget *casilla9;
+GtkWidget *casilla10;
+GtkWidget *casilla11;
+GtkWidget *casilla12;
+GtkWidget *casilla13;
+GtkWidget *casilla14;
+GtkWidget *casilla15;
+
+
+
   GdkColor color;
   GtkWindow *window_c;
   GtkWidget *frame;

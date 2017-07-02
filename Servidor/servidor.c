@@ -111,7 +111,7 @@ int main()
               printf("Numero de carta en el arreglo....: %d Valor de contador de cartas...:%d\n", cartas[numCarta],numCarta);             
               sprintf(resp, "%d",cartas[numCarta]);
               numCarta=numCarta+1; 
-              sleep(10); 
+              sleep(8); 
            }  
            else if(strcmp(buf,"ganejuego")==0){// Se recibe el mensaje de Juego Finalizado de alguno de de los cliente
             printf("YA HAY UN GANADOR -> INDICAR A TODOS LOS NODOS\n");

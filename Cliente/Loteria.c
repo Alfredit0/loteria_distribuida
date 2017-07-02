@@ -13,7 +13,22 @@
 
 #define MAX_LINE 10
 extern int errno;
-char filename[23];	
+char filename[23];
+int carServidor;
+int contador=0;
+
+int tabAux[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+int tabJuego[16]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};	
+int tablero1[16]={9,41,10,38,2,50,31,1,24,12,4,37,36,5,16,29};
+int tablero2[16]={25,1,30,16,39,14,50,17,24,5,18,37,34,44,52,3};
+int tablero3[16]={30,43,29,28,39,21,7,31,48,44,6,40,18,36,34,50};
+int tablero4[16]={24,53,3,30,20,47,19,49,38,17,15,51,10,14,11,33};
+int tablero5[16]={2,19,11,22,14,40,3,53,32,9,20,39,33,41,18,1};
+int tablero6[16]={1,46,39,11,5,8,35,2,24,27,34,44,53,10,7,22};
+int tablero7[16]={32,43,33,8,11,2,14,44,3,48,7,15,4,16,46,6};
+int tablero8[16]={20,44,48,33,30,26,46,1,23,32,12,14,4,27,19,8};
+int tablero9[16]={50,10,43,23,48,24,14,7,21,4,51,36,6,13,49,12};
+int tablero10[16]={49,6,17,39,18,1,50,11,36,45,16,47,9,28,54,3};
 
 char filenameM[23];	
 static GtkItemFactoryEntry menu_items[] = {
@@ -111,6 +126,7 @@ void Jugar()
    int s, len;
    char mensaje[MAX_LINE];
    char *sl="A1"; 
+   int numTab;
    hent = gethostbyname("localhost");
    //Creación de socket 
    if((s=socket(AF_INET,SOCK_STREAM,0)) < 0) {
@@ -139,7 +155,10 @@ void Jugar()
          exit(0);
      }
    buf[len] = '\0';
-   printf("Respuesta..: %s\n\n",buf);  
+   printf("Respuesta..: %s\n\n",buf); 
+   numTab= atoi(buf);
+
+   dameTablero(numTab); 
       		
         window_c = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));//Crea la ventana principal
         gtk_window_set_icon(GTK_WINDOW(window_c), create_pixbuf("icon.png"));//coloca el icono del programa
@@ -173,7 +192,98 @@ void Jugar()
 		
         if(strcmp(buf,"RECHAZADO")!=0){//
 		int cont=0;	
-    
+    	
+
+	
+	casilla0=gtk_button_new_with_label("0");
+        gtk_widget_set_size_request(casilla0,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla0,50,50);
+	g_signal_connect_swapped (G_OBJECT (casilla0), "clicked",G_CALLBACK (marcarCarta),(gpointer) 0);
+
+	casilla1=gtk_button_new_with_label("1");
+        gtk_widget_set_size_request(casilla1,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla1,171,50);
+	g_signal_connect_swapped (G_OBJECT (casilla1), "clicked",G_CALLBACK (marcarCarta),(gpointer) 1);
+
+	casilla2=gtk_button_new_with_label("2");
+        gtk_widget_set_size_request(casilla2,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla2,292,50);
+	g_signal_connect_swapped (G_OBJECT (casilla2), "clicked",G_CALLBACK (marcarCarta),(gpointer) 2);
+
+	casilla3=gtk_button_new_with_label("3");
+        gtk_widget_set_size_request(casilla3,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla3,413,50);
+	g_signal_connect_swapped (G_OBJECT (casilla3), "clicked",G_CALLBACK (marcarCarta),(gpointer) 3);
+
+	casilla4=gtk_button_new_with_label("4");
+        gtk_widget_set_size_request(casilla4,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla4,50,226);
+        g_signal_connect_swapped (G_OBJECT (casilla4), "clicked",G_CALLBACK (marcarCarta),(gpointer) 4);
+
+	casilla5=gtk_button_new_with_label("5");
+        gtk_widget_set_size_request(casilla5,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla5,171,226);
+	g_signal_connect(casilla5, "clicked", G_CALLBACK (marcarCarta),NULL);
+	g_signal_connect_swapped (G_OBJECT (casilla5), "clicked",G_CALLBACK (marcarCarta),(gpointer) 5);	
+
+	casilla6=gtk_button_new_with_label("6");
+        gtk_widget_set_size_request(casilla6,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla6,292,226);
+	g_signal_connect(casilla6, "clicked", G_CALLBACK (marcarCarta),NULL);
+	g_signal_connect_swapped (G_OBJECT (casilla6), "clicked",G_CALLBACK (marcarCarta),(gpointer) 6);
+
+	casilla7=gtk_button_new_with_label("7");
+        gtk_widget_set_size_request(casilla7,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla7,413,226);
+	g_signal_connect(casilla7, "clicked", G_CALLBACK (marcarCarta),NULL);
+	g_signal_connect_swapped (G_OBJECT (casilla7), "clicked",G_CALLBACK (marcarCarta),(gpointer) 7);
+
+        casilla8=gtk_button_new_with_label("8");
+        gtk_widget_set_size_request(casilla8,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla8,50,402);
+	g_signal_connect(casilla8, "clicked", G_CALLBACK (marcarCarta),NULL);
+	g_signal_connect_swapped (G_OBJECT (casilla8), "clicked",G_CALLBACK (marcarCarta),(gpointer) 8);
+
+	casilla9=gtk_button_new_with_label("9");
+        gtk_widget_set_size_request(casilla9,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla9,171,402);
+	g_signal_connect(casilla9, "clicked", G_CALLBACK (marcarCarta),NULL);
+	g_signal_connect_swapped (G_OBJECT (casilla9), "clicked",G_CALLBACK (marcarCarta),(gpointer) 9);
+
+	casilla10=gtk_button_new_with_label("10");
+        gtk_widget_set_size_request(casilla10,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla10,292,402);
+	g_signal_connect(casilla10, "clicked", G_CALLBACK (marcarCarta),NULL);
+	g_signal_connect_swapped (G_OBJECT (casilla10), "clicked",G_CALLBACK (marcarCarta),(gpointer) 10);
+
+	casilla11=gtk_button_new_with_label("11");
+        gtk_widget_set_size_request(casilla11,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla11,413,402);
+	g_signal_connect(casilla11, "clicked", G_CALLBACK (marcarCarta),NULL);
+	g_signal_connect_swapped (G_OBJECT (casilla11), "clicked",G_CALLBACK (marcarCarta),(gpointer) 11);
+
+        casilla12=gtk_button_new_with_label("12");
+        gtk_widget_set_size_request(casilla12,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla12,50,578);
+	g_signal_connect(casilla12, "clicked", G_CALLBACK (marcarCarta),NULL);
+	g_signal_connect_swapped (G_OBJECT (casilla12), "clicked",G_CALLBACK (marcarCarta),(gpointer) 12);
+
+	casilla13=gtk_button_new_with_label("13");
+        gtk_widget_set_size_request(casilla13,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla13,171,578);
+	g_signal_connect(casilla13, "clicked", G_CALLBACK (marcarCarta),NULL);
+	g_signal_connect_swapped (G_OBJECT (casilla13), "clicked",G_CALLBACK (marcarCarta),(gpointer) 13);
+
+	casilla14=gtk_button_new_with_label("14");
+        gtk_widget_set_size_request(casilla14,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla14,292,578);
+	g_signal_connect_swapped (G_OBJECT (casilla14), "clicked",G_CALLBACK (marcarCarta),(gpointer) 14);
+
+	casilla15=gtk_button_new_with_label("15");
+        gtk_widget_set_size_request(casilla15,120,175);
+        gtk_fixed_put (GTK_FIXED(frame),casilla15,413,578);
+	g_signal_connect_swapped (G_OBJECT (casilla15), "clicked",G_CALLBACK (marcarCarta),(gpointer) 15);
+
         //tablero asignado 
         strcpy(filename,"Imagenes/tablero");
         strcat(filename,buf);
@@ -182,6 +292,7 @@ void Jugar()
 		tablero=gtk_image_new_from_pixbuf(pixbuf);			
 		gtk_fixed_put(GTK_FIXED(frame),tablero,50,50); 		
 		
+
         //Mostramos todos los elementos
 		gtk_widget_show_all(GTK_WIDGET(window_c));
 		
@@ -216,6 +327,7 @@ void Jugar()
 						close(s);
 						exit(0);
 					}
+
 					while(gtk_events_pending()) gtk_main_iteration();
 					buf[len] = '\0';
 					printf("Carta lanzada..: %s\n\n",buf);	
@@ -223,12 +335,21 @@ void Jugar()
 					strcpy(filename,"Imagenes/");
 					strcat(filename,buf);
 					strcat(filename,".jpg");
+					carServidor= atoi(buf);
+
+					// Pone targeta recibida
+					pixbuf= gdk_pixbuf_new_from_file_at_scale(filename,174,276,TRUE,NULL);
+					carta=gtk_image_new_from_pixbuf(pixbuf);			
+					gtk_fixed_put(GTK_FIXED(frame),carta,600,280);					
+					gtk_widget_show (carta);
 					
+					//obtengo nombre del audio
 					strcpy(filenameM,"Sonidos/");
 					strcat(filenameM,buf);
 					strcat(filenameM,".mp3");
-					
-					
+					//
+					while(gtk_events_pending()) gtk_main_iteration();
+					//Reproduce audio
 					pid_t x;      // a special kind of int
 					char kil[20] = "kill -s 9 ";
 			 
@@ -253,13 +374,11 @@ void Jugar()
 					}  
 					*/
 					
+					if(contador==16){
+						printf("Ya gane!!!!!!!\n");
+					}
 					
-					
-					
-					pixbuf= gdk_pixbuf_new_from_file_at_scale(filename,174,276,TRUE,NULL);
-					carta=gtk_image_new_from_pixbuf(pixbuf);			
-					gtk_fixed_put(GTK_FIXED(frame),carta,600,280);					
-					gtk_widget_show (carta);							
+												
 					if(strcmp(buf,"YAGANARON")==0){//   
 						break;
 					}						
@@ -283,6 +402,175 @@ void Jugar()
 		}else{
 		printf("Jugador Rechazado!! Intente mas tarde\n\n");	
 		}	
+}
+
+void dameTablero( int numTab){
+	printf("tablero asignada en case: %d\n\n",numTab);	
+	int i;
+	switch(numTab)
+	{
+		case 1:
+			for( i=0; i<16;i++)
+			  	tabJuego[i]=tablero1[i];
+			break;
+		case 2:
+			for( i=0; i<16;i++)
+			  	tabJuego[i]=tablero2[i];
+			break;
+			
+		case 3:
+			for( i=0; i<16;i++)
+			  	tabJuego[i]=tablero3[i];
+			break;
+		case 4:
+			for( i=0; i<16;i++)
+			  	tabJuego[i]=tablero4[i];
+			break;
+		case 5:
+			for( i=0; i<16;i++)
+			  	tabJuego[i]=tablero5[i];
+			break;
+		case 6:
+			for( i=0; i<16;i++)
+			  	tabJuego[i]=tablero6[i];
+			break;
+		case 7:
+			for( i=0; i<16;i++)
+			  	tabJuego[i]=tablero7[i];
+			break;
+		case 8:
+			for( i=0; i<16;i++)
+			  	tabJuego[i]=tablero8[i];
+			break;
+		case 9:
+			for( i=0; i<16;i++)
+			  	tabJuego[i]=tablero9[i];
+			break;
+		case 10:
+			for( i=0; i<16;i++)
+			  	tabJuego[i]=tablero10[i];
+			break;
+		
+	}
+
+	/*printf("imprimiendo arrego\n");
+	for( i=0; i<16;i++)
+			  	printf(",  %d",tabJuego[i]);*/
+}
+
+void marcarCarta(int pos){
+	
+	//while(gtk_events_pending()) gtk_main_iteration();
+	
+	if(tabJuego[pos] == carServidor){
+		
+		tabAux[pos]=1;
+		contador++;
+		switch(pos)
+	{
+		case 0:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,50,50);
+			gtk_widget_show (maiz);
+			break;
+		case 1:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,171,50);
+			gtk_widget_show (maiz);
+			break;
+		case 2:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,292,50);
+			gtk_widget_show (maiz);
+			break;
+			
+		case 3:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,413,50);
+			gtk_widget_show (maiz);
+			break;
+		case 4:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,50,226);
+			gtk_widget_show (maiz);
+			break;
+		case 5:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,171,226);
+			gtk_widget_show (maiz);
+			break;
+		case 6:
+		pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,292,226);
+			gtk_widget_show (maiz);
+			break;
+		case 7:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,413,226);
+			gtk_widget_show (maiz);
+			break;
+		case 8:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,50,402);
+			gtk_widget_show (maiz);
+			break;
+		case 9:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,171,402);
+			gtk_widget_show (maiz);
+			break;
+		case 10:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,292,402);
+			gtk_widget_show (maiz);
+			break;
+		case 11:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,413,402);
+			gtk_widget_show (maiz);
+			break;
+		case 12:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,50,578);
+			gtk_widget_show (maiz);
+			break;
+			
+		case 13:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,171,578);
+			gtk_widget_show (maiz);
+			break;
+		case 14:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,292,578);
+			gtk_widget_show (maiz);
+			break;
+		case 15:
+			pixbuf= gdk_pixbuf_new_from_file_at_scale("Imagenes/maiz.png",120,175,TRUE,NULL);
+			maiz=gtk_image_new_from_pixbuf(pixbuf);							
+			gtk_fixed_put (GTK_FIXED(frame),maiz,413,578);
+			gtk_widget_show (maiz);
+			break;
+		
+	}
+
+	}
+
 }
 
 void Ayuda()
