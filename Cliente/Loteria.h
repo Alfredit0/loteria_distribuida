@@ -25,6 +25,9 @@ GtkWidget  *swin, *viewport, *table1, *table2,*imagen, *hpaned,*button,*button2,
 GtkWidget  *tablero;
 GtkWidget  *carta;
 GtkWidget  *maiz;
+
+
+GtkWindow *windowM;
 GtkTextBuffer *buffer;
 char cadena[100];
 GtkTextMark *mark;

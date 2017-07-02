@@ -98,7 +98,7 @@ int main()
          /* Cierra el socket incompleto */
          /* se dedica a atender la conexion con el socket completo */
          close(s);
-         while(1){ // Transferencia de datos.
+          while(1){ // Transferencia de datos.
             if((len=recv(ss,buf,MAX_LINE-1,0))<=0){
                perror("RECV: "); /* Si len==0 entonces el cliente cerro la conexion */
                exit(1);
@@ -111,79 +111,71 @@ int main()
                printf("Termina el servicio por decision del Cliente\n");
                close(ss); //Cerrar la conexión
                exit(0); /* el proceso hijo se mata */
-            }
-           else if(strcmp(buf,"damecarta")==0){// Se recibe solicitud de carta por parte del cliente ya conectado			   
+            }else if(strcmp(buf,"ganejuego")==0){// Se recibe el mensaje de Juego Finalizado de alguno de de los cliente
+              printf("YA HAY UN GANADOR -> INDICAR A TODOS LOS NODOS\n");
+              *bandGanador=99;
+              strcpy(resp,"YAGANARON");
+            }else if(strcmp(buf,"damecarta")==0){// Se recibe solicitud de carta por parte del cliente ya conectado			   
 
-              if (*bandGanador==99)
-              {
-               printf("YA HAY UN GANADOR DEL JUEGO\n");               
-               strcpy(resp,"YAGANARON");
-            }else{
-               if (numCarta==54)
-               {
+              if (*bandGanador==99){
+                printf("YA HAY UN GANADOR DEL JUEGO\n");               
+                strcpy(resp,"YAGANARON");
+              }else{
+                if (numCarta==54){
                   strcpy(resp,"TERMINADO");
                   bandTiempo=2;
-               }else{
-                 printf("Resolviendo carta para el usuario\n");
-                 printf("Numero de carta en el arreglo....: %d Valor de contador de cartas...:%d\n", cartas[numCarta],numCarta);             
-                 sprintf(resp, "%d",cartas[numCarta]);
-                 numCarta=numCarta+1; 
-                 bandTiempo=1;
+                }else{
+                  printf("Resolviendo carta para el usuario\n");
+                  printf("Numero de carta en el arreglo....: %d Valor de contador de cartas...:%d\n", cartas[numCarta],numCarta);             
+                  sprintf(resp, "%d",cartas[numCarta]);
+                  numCarta=numCarta+1; 
+                  bandTiempo=1;
+                }
               }
-           }
-        }  
-           else if(strcmp(buf,"ganejuego")==0){// Se recibe el mensaje de Juego Finalizado de alguno de de los cliente
-            printf("YA HAY UN GANADOR -> INDICAR A TODOS LOS NODOS\n");
-            *bandGanador=99;
-            strcpy(resp,"YAGANARON");
-         }
-            else if(strcmp(buf,"conectame")==0){//       
-             *numJugadores=*numJugadores+1;		                     				
-					if(*numJugadores<=3){ //	
-						printf("Un jugador conectado\n");						
-						printf("El numero de jugadores conectados es %d\n", *numJugadores);				
-						printf("Jugador aceptado!!\n\n");
-						//strcpy(nombres[*numJugadores],buf);								
-						tablero = validarInsertarTablero(*numJugadores, &*tabJugador1, &*tabJugador2, &*tabJugador3, &*tabJugador4, &*tabJugador5);				
-						sprintf(resp, "%d",tablero);
-						printf("Tablero asignado %s\n", buf);
-						printf("Tablero del jugador 1..: %d\nTablero del jugador 2..: %d\nTablero del jugador 3..: %d\n", *tabJugador1, *tabJugador2, *tabJugador3);
+            }else if(strcmp(buf,"conectame")==0){//       
+              *numJugadores=*numJugadores+1;		                     				
+					    if(*numJugadores<=5){ //	
+    						printf("Un jugador conectado\n");						
+    						printf("El numero de jugadores conectados es %d\n", *numJugadores);				
+    						printf("Jugador aceptado!!\n\n");
+    						//strcpy(nombres[*numJugadores],buf);								
+    						tablero = validarInsertarTablero(*numJugadores, &*tabJugador1, &*tabJugador2, &*tabJugador3, &*tabJugador4, &*tabJugador5);				
+    						sprintf(resp, "%d",tablero);
+    						printf("Tablero asignado %s\n", buf);
+    						printf("Tablero del jugador 1..: %d\nTablero del jugador 2..: %d\nTablero del jugador 3..: %d\n", *tabJugador1, *tabJugador2, *tabJugador3);
 
-					}else{								
-                  printf("El numero de jugadores conectados es %d\n", *numJugadores);				
-                  printf("Jugador Rechazado!!\n\n");	
-                  strcpy(resp, "RECHAZADO");
-               }				
-            }
-            else if(strcmp(buf,"yaempiezo")==0){//                            				
+    					}else{								
+                printf("El numero de jugadores conectados es %d\n", *numJugadores);				
+                printf("Jugador Rechazado!!\n\n");	
+                strcpy(resp, "RECHAZADO");
+              }				
+            }else if(strcmp(buf,"yaempiezo")==0){//                            				
 
-					if(*numJugadores==1){ //						
-						printf("COMIENZAN LOS CLIENTES A JUGAR\n");
-						strcpy(nombres[*numJugadores],buf);
-						strcpy(resp,"COMIENZAN");
+    					if(*numJugadores==5){ //						
+    						printf("COMIENZAN LOS CLIENTES A JUGAR\n");
+    						strcpy(nombres[*numJugadores],buf);
+    						strcpy(resp,"COMIENZAN");
 
-					}else{		
-						//printf("El numero de jugadores conectados es %d", *numJugadores);							
-						strcpy(resp,"FALTANJUG");
-               }				
+    					}else{		
+    						//printf("El numero de jugadores conectados es %d", *numJugadores);							
+    						strcpy(resp,"FALTANJUG");
+              }				
             }else{
               strcpy(resp,"NINGUNAOP");
-           }								
+            }								
             // Transferencia de datos. 
             if(send(ss,resp,strlen(resp),0) < len) /* responde al cliente */
-           perror("SEND: ");
-           if (bandTiempo==1)
-           {
+              perror("SEND: ");
+            if (bandTiempo==1){
               sleep(8); 
               bandTiempo=0;
-           }
-           if (bandTiempo==2)
-           {
+            }
+            if (bandTiempo==2){
               *numJugadores=0;
-           }
-         } /*while */
-      } /* if fork */
-      else /* Aqui continua el proceso vigia para aceptar otra conexion */
+            }
+          } /*while */
+        } /* if fork */
+        else /* Aqui continua el proceso vigia para aceptar otra conexion */
          close(ss); /* el padre cierra el socket completo que dejo al hijo */
    } /*while*/
 
