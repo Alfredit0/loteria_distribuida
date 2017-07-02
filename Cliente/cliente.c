@@ -89,8 +89,7 @@ int main(int argc,char *argv[])
 		   			exit(0);
 		   		}
 		   		buf[len] = '\0';
-		   		printf("Carta lanzada..: %s\n\n",buf);	
-		   		sleep(2);				
+		   		printf("Carta lanzada..: %s\n\n",buf);			   		
 					if(strcmp(buf,"YAGANARON")==0){//   
 						break;
 					}						
