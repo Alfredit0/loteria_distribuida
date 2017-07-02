@@ -54,9 +54,10 @@ int main()
    //Se inicializa el juego
    inicializarJuego(cartas);
    //Numero de carta (Se generara aleaotrio)
-   int numCarta;
-   //Incializa contador de numero de carta
+   int numCarta, bandTiempo;
+   //Incializa contador de numero de carta y bandera
    numCarta=0;
+   bandTiempo=0;
    //Numero de tablero
    int tablero=0;
    printf("El numero de jugadores *Inicializado****  es %d", *numJugadores);
@@ -86,7 +87,12 @@ int main()
       if((ss=accept(s,(struct sockaddr *)&fsock, &len)) < 0){
          perror("ACCEPT: ");
          continue;
-      }      
+      }  
+      if (*numJugadores==0)
+          {
+            //Se inicializa el juego
+            inicializarJuego(cartas);
+          }    
       if (fork() == 0) {
          /* Aqui se ejecuta el proceso hijo */
          /* Cierra el socket incompleto */
@@ -107,12 +113,24 @@ int main()
                exit(0); /* el proceso hijo se mata */
             }
            else if(strcmp(buf,"damecarta")==0){// Se recibe solicitud de carta por parte del cliente ya conectado			   
-              printf("Resolviendo carta para el usuario\n");
-              printf("Numero de carta en el arreglo....: %d Valor de contador de cartas...:%d\n", cartas[numCarta],numCarta);             
-              sprintf(resp, "%d",cartas[numCarta]);
-              numCarta=numCarta+1; 
-              sleep(10); 
-           }  
+              if (*bandGanador==99)
+              {
+               printf("YA HAY UN GANADOR DEL JUEGO\n");               
+               strcpy(resp,"YAGANARON");
+            }else{
+               if (numCarta==54)
+               {
+                  strcpy(resp,"TERMINADO");
+                  bandTiempo=2;
+               }else{
+                 printf("Resolviendo carta para el usuario\n");
+                 printf("Numero de carta en el arreglo....: %d Valor de contador de cartas...:%d\n", cartas[numCarta],numCarta);             
+                 sprintf(resp, "%d",cartas[numCarta]);
+                 numCarta=numCarta+1; 
+                 bandTiempo=1;
+              }
+           }
+        }  
            else if(strcmp(buf,"ganejuego")==0){// Se recibe el mensaje de Juego Finalizado de alguno de de los cliente
             printf("YA HAY UN GANADOR -> INDICAR A TODOS LOS NODOS\n");
             *bandGanador=99;
@@ -153,6 +171,15 @@ int main()
             // Transferencia de datos. 
             if(send(ss,resp,strlen(resp),0) < len) /* responde al cliente */
            perror("SEND: ");
+           if (bandTiempo==1)
+           {
+              sleep(6); 
+              bandTiempo=0;
+           }
+           if (bandTiempo==2)
+           {
+              *numJugadores=0;
+           }
          } /*while */
       } /* if fork */
       else /* Aqui continua el proceso vigia para aceptar otra conexion */
