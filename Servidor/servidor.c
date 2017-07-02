@@ -113,14 +113,7 @@ int main()
                exit(0); /* el proceso hijo se mata */
             }
            else if(strcmp(buf,"damecarta")==0){// Se recibe solicitud de carta por parte del cliente ya conectado			   
-<<<<<<< HEAD
-              printf("Resolviendo carta para el usuario\n");
-              printf("Numero de carta en el arreglo....: %d Valor de contador de cartas...:%d\n", cartas[numCarta],numCarta);             
-              sprintf(resp, "%d",cartas[numCarta]);
-              numCarta=numCarta+1; 
-              sleep(4); 
-           }  
-=======
+
               if (*bandGanador==99)
               {
                printf("YA HAY UN GANADOR DEL JUEGO\n");               
@@ -139,7 +132,6 @@ int main()
               }
            }
         }  
->>>>>>> 52bb3026edcfc5da37280099a3baabc7b5977e53
            else if(strcmp(buf,"ganejuego")==0){// Se recibe el mensaje de Juego Finalizado de alguno de de los cliente
             printf("YA HAY UN GANADOR -> INDICAR A TODOS LOS NODOS\n");
             *bandGanador=99;
@@ -165,7 +157,7 @@ int main()
             }
             else if(strcmp(buf,"yaempiezo")==0){//                            				
 
-					if(*numJugadores==3){ //						
+					if(*numJugadores==1){ //						
 						printf("COMIENZAN LOS CLIENTES A JUGAR\n");
 						strcpy(nombres[*numJugadores],buf);
 						strcpy(resp,"COMIENZAN");
@@ -182,7 +174,7 @@ int main()
            perror("SEND: ");
            if (bandTiempo==1)
            {
-              sleep(6); 
+              sleep(8); 
               bandTiempo=0;
            }
            if (bandTiempo==2)

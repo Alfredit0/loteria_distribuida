@@ -222,67 +222,58 @@ void Jugar()
 
 	casilla5=gtk_button_new_with_label("5");
         gtk_widget_set_size_request(casilla5,120,175);
-        gtk_fixed_put (GTK_FIXED(frame),casilla5,171,226);
-	g_signal_connect(casilla5, "clicked", G_CALLBACK (marcarCarta),NULL);
+        gtk_fixed_put (GTK_FIXED(frame),casilla5,171,226);	
 	g_signal_connect_swapped (G_OBJECT (casilla5), "clicked",G_CALLBACK (marcarCarta),(gpointer) 5);	
 
 	casilla6=gtk_button_new_with_label("6");
         gtk_widget_set_size_request(casilla6,120,175);
-        gtk_fixed_put (GTK_FIXED(frame),casilla6,292,226);
-	g_signal_connect(casilla6, "clicked", G_CALLBACK (marcarCarta),NULL);
+        gtk_fixed_put (GTK_FIXED(frame),casilla6,292,226);	
 	g_signal_connect_swapped (G_OBJECT (casilla6), "clicked",G_CALLBACK (marcarCarta),(gpointer) 6);
 
 	casilla7=gtk_button_new_with_label("7");
         gtk_widget_set_size_request(casilla7,120,175);
-        gtk_fixed_put (GTK_FIXED(frame),casilla7,413,226);
-	g_signal_connect(casilla7, "clicked", G_CALLBACK (marcarCarta),NULL);
+        gtk_fixed_put (GTK_FIXED(frame),casilla7,413,226);	
 	g_signal_connect_swapped (G_OBJECT (casilla7), "clicked",G_CALLBACK (marcarCarta),(gpointer) 7);
 
         casilla8=gtk_button_new_with_label("8");
         gtk_widget_set_size_request(casilla8,120,175);
-        gtk_fixed_put (GTK_FIXED(frame),casilla8,50,402);
-	g_signal_connect(casilla8, "clicked", G_CALLBACK (marcarCarta),NULL);
+        gtk_fixed_put (GTK_FIXED(frame),casilla8,50,402);	
 	g_signal_connect_swapped (G_OBJECT (casilla8), "clicked",G_CALLBACK (marcarCarta),(gpointer) 8);
 
 	casilla9=gtk_button_new_with_label("9");
         gtk_widget_set_size_request(casilla9,120,175);
-        gtk_fixed_put (GTK_FIXED(frame),casilla9,171,402);
-	g_signal_connect(casilla9, "clicked", G_CALLBACK (marcarCarta),NULL);
+        gtk_fixed_put (GTK_FIXED(frame),casilla9,171,402);	
 	g_signal_connect_swapped (G_OBJECT (casilla9), "clicked",G_CALLBACK (marcarCarta),(gpointer) 9);
 
 	casilla10=gtk_button_new_with_label("10");
         gtk_widget_set_size_request(casilla10,120,175);
-        gtk_fixed_put (GTK_FIXED(frame),casilla10,292,402);
-	g_signal_connect(casilla10, "clicked", G_CALLBACK (marcarCarta),NULL);
+        gtk_fixed_put (GTK_FIXED(frame),casilla10,292,402);	
 	g_signal_connect_swapped (G_OBJECT (casilla10), "clicked",G_CALLBACK (marcarCarta),(gpointer) 10);
 
 	casilla11=gtk_button_new_with_label("11");
         gtk_widget_set_size_request(casilla11,120,175);
         gtk_fixed_put (GTK_FIXED(frame),casilla11,413,402);
-	g_signal_connect(casilla11, "clicked", G_CALLBACK (marcarCarta),NULL);
 	g_signal_connect_swapped (G_OBJECT (casilla11), "clicked",G_CALLBACK (marcarCarta),(gpointer) 11);
 
         casilla12=gtk_button_new_with_label("12");
         gtk_widget_set_size_request(casilla12,120,175);
         gtk_fixed_put (GTK_FIXED(frame),casilla12,50,578);
-	g_signal_connect(casilla12, "clicked", G_CALLBACK (marcarCarta),NULL);
 	g_signal_connect_swapped (G_OBJECT (casilla12), "clicked",G_CALLBACK (marcarCarta),(gpointer) 12);
 
 	casilla13=gtk_button_new_with_label("13");
         gtk_widget_set_size_request(casilla13,120,175);
-        gtk_fixed_put (GTK_FIXED(frame),casilla13,171,578);
-	g_signal_connect(casilla13, "clicked", G_CALLBACK (marcarCarta),NULL);
+        gtk_fixed_put (GTK_FIXED(frame),casilla13,171,578);	
 	g_signal_connect_swapped (G_OBJECT (casilla13), "clicked",G_CALLBACK (marcarCarta),(gpointer) 13);
 
 	casilla14=gtk_button_new_with_label("14");
         gtk_widget_set_size_request(casilla14,120,175);
         gtk_fixed_put (GTK_FIXED(frame),casilla14,292,578);
-	g_signal_connect_swapped (G_OBJECT (casilla14), "clicked",G_CALLBACK (marcarCarta),(gpointer) 14);
+		g_signal_connect_swapped (G_OBJECT (casilla14), "clicked",G_CALLBACK (marcarCarta),(gpointer) 14);
 
 	casilla15=gtk_button_new_with_label("15");
         gtk_widget_set_size_request(casilla15,120,175);
         gtk_fixed_put (GTK_FIXED(frame),casilla15,413,578);
-	g_signal_connect_swapped (G_OBJECT (casilla15), "clicked",G_CALLBACK (marcarCarta),(gpointer) 15);
+		g_signal_connect_swapped (G_OBJECT (casilla15), "clicked",G_CALLBACK (marcarCarta),(gpointer) 15);
 
         //tablero asignado 
         strcpy(filename,"Imagenes/tablero");
@@ -461,7 +452,7 @@ void dameTablero( int numTab){
 void marcarCarta(int pos){
 	
 	//while(gtk_events_pending()) gtk_main_iteration();
-	
+	printf("Posicion..........: %d\n", pos );
 	if(tabJuego[pos] == carServidor){
 		
 		tabAux[pos]=1;
