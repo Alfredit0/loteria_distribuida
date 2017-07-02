@@ -19,89 +19,89 @@ extern int errno;
 
 int main(int argc,char *argv[])
 {
-   char buf[MAX_LINE];
-   struct sockaddr_in fsock, sname;
-   struct hostent *hent; /* estructura que guarda el llamado a gethostbyname */
-   int s, len;
-   char mensaje[MAX_LINE];
-   char *sl="A1"; 
-   hent = gethostbyname("localhost");
+	char buf[MAX_LINE];
+	struct sockaddr_in fsock, sname;
+   	struct hostent *hent; /* estructura que guarda el llamado a gethostbyname */
+	int s, len;
+	char mensaje[MAX_LINE];
+	char *sl="A1"; 
+	hent = gethostbyname("localhost");
    //Creación de socket 
-   if((s=socket(AF_INET,SOCK_STREAM,0)) < 0) {
-      perror("SOCKET: ");
-      exit(0);
-   }
-   fsock.sin_family = AF_INET;
+	if((s=socket(AF_INET,SOCK_STREAM,0)) < 0) {
+		perror("SOCKET: ");
+		exit(0);
+	}
+	fsock.sin_family = AF_INET;
    fsock.sin_addr.s_addr = *(long *) hent->h_addr; /* direccion IP de Maq. Remota */
    fsock.sin_port = htons(4400); /* puerto de la maq. remota */
    //Estableciendo conexión 
-   if(connect(s,(struct sockaddr *)&fsock, sizeof(struct sockaddr_in)) == -1){
-      perror("CONNECT: ");
-      close(s);
-      exit(0);
-   }
-   printf("Arranca el Programa Cliente !!!... Pulse q para salir\n");
-   strcpy(mensaje,"conectame");
+	if(connect(s,(struct sockaddr *)&fsock, sizeof(struct sockaddr_in)) == -1){
+		perror("CONNECT: ");
+		close(s);
+		exit(0);
+	}
+	printf("Arranca el Programa Cliente !!!... Pulse q para salir\n");
+	strcpy(mensaje,"conectame");
    //printf("Escribe tu mensaje de Jugador ");
    //scanf("%s",mensaje);
    //printf("Tu mensaje es = %s\n",mensaje);
    //Transferencia de datos 
-   if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
-    perror("SEND: ");    
-   }
+	if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
+		perror("SEND: ");    
+	}
     //printf("Me detengo a recibir la respuesta del servidor...\n");
     //Transferencia de datos 
-    if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
-         perror("RECV: ");
-         close(s);
-         exit(0);
-     }
-   buf[len] = '\0';
-   printf("Respuesta..: %s\n\n",buf);   
+	if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
+		perror("RECV: ");
+		close(s);
+		exit(0);
+	}
+	buf[len] = '\0';
+	printf("Respuesta..: %s\n\n",buf);   
    if(strcmp(buf,"RECHAZADO")!=0){//
-	   while(1){
+   	while(1){
 			//Asignacion de mensaje
-		   strcpy(mensaje,"yaempiezo");  
+   		strcpy(mensaje,"yaempiezo");  
 		   //Envio de datos 
-		   if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
-			perror("SEND: ");    
-		   }			
+   		if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
+   			perror("SEND: ");    
+   		}			
 			//Transferencia de datos 
-			if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
-				 perror("RECV: ");
-				 close(s);
-				 exit(0);
-			 }
-		   buf[len] = '\0';
+   		if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
+   			perror("RECV: ");
+   			close(s);
+   			exit(0);
+   		}
+   		buf[len] = '\0';
 		   //printf("Respuesta..: %s\n\n",buf);
 		   if(strcmp(buf,"COMIENZAN")==0){//   			   
-			   while(1){
+		   	while(1){
 					//Asignacion de mensaje
-					strcpy(mensaje,"damecarta");  
+		   		strcpy(mensaje,"damecarta");  
 					//Envio de datos 
-					if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
-						perror("SEND: ");    
-					}			
+		   		if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
+		   			perror("SEND: ");    
+		   		}			
 					//Transferencia de datos 
-					if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
-						perror("RECV: ");
-						close(s);
-						exit(0);
-					}
-					buf[len] = '\0';
-					printf("Carta lanzada..: %s\n\n",buf);	
-					sleep(6);				
+		   		if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
+		   			perror("RECV: ");
+		   			close(s);
+		   			exit(0);
+		   		}
+		   		buf[len] = '\0';
+		   		printf("Carta lanzada..: %s\n\n",buf);	
+		   		sleep(2);				
 					if(strcmp(buf,"YAGANARON")==0){//   
 						break;
 					}						
 				}
 			}
 		   if(strcmp(buf,"NINGUNAOP")==0){//   
-			break;
-			}		
-	   }	
+		   	break;
+		   }		
+		}	
 	}else{
-	printf("Jugador Rechazado!! Intente mas tarde\n\n");	
+		printf("Jugador Rechazado!! Intente mas tarde\n\n");	
 	}
 
 	return 0;
