@@ -13,6 +13,7 @@
 #include <sys/mman.h> /* mmap() is defined in this header */
 #include <fcntl.h>
 #include <time.h>
+#include <sys/shm.h>
 
 #define MAX_LINE 10
 extern int errno;
@@ -60,10 +61,17 @@ int main()
    bandTiempo=0;
    //Numero de tablero
    int tablero=0;
-   printf("El numero de jugadores *Inicializado****  es %d", *numJugadores);
+   
+   //Declaracion de variables para estado General del Juego
+
+   key_t Clave;
+   int Id_Memoria;
+   int *Memoria = NULL;
+   int j;
+
    
    //Creación de socket
-   if((s=socket(AF_INET,SOCK_STREAM,0)) < 0) {
+   if((s=socket(AF_INET,SOCK_STREAM | SOCK_NONBLOCK,0)) < 0) {
       perror("SOCKET: ");
       exit(0);
    }
@@ -82,6 +90,62 @@ int main()
    }
 
    while(1){ 
+      ///printf("HOLA SOY EL SERVER ***\n");
+      printf("Numero GLOBAL DE JUGADORES....:%d\n", *numJugadores);
+      if(*numJugadores==1){ // 
+               //
+               // Igual que en p1.cc, obtenemos una clave para la memoria compartida
+               //
+               Clave = ftok ("/bin/ls", 33);
+               if (Clave == -1)
+               {
+                  printf("No consigo clave para memoria compartida\n");
+                  exit(0);
+               }
+
+               //
+               // Igual que en p1.cc, obtenemos el id de la memoria. Al no poner
+               // el flag IPC_CREAT, estamos suponiendo que dicha memoria ya está
+               // creada.
+               //
+               Id_Memoria = shmget (Clave, sizeof(int)*100, 0777 );
+               if (Id_Memoria == -1)
+               {
+                  printf("No consigo Id para memoria compartida\n");
+                  exit (0);
+               }
+
+               //
+               // Igual que en p1.cc, obtenemos un puntero a la memoria compartida
+               //
+               Memoria = (int *)shmat (Id_Memoria, (char *)0, 0);
+               if (Memoria == NULL)
+               {
+                  printf("No consigo memoria compartida\n");
+                  exit (0);
+               }
+
+               //
+               // Vamos leyendo el valor de la memoria con esperas de un segundo
+               // y mostramos en pantalla dicho valor. Debería ir cambiando según
+               // p1 lo va modificando.
+               //
+               for (j=0; j<16; j++)
+               {
+                  printf("Leido %d\n",Memoria[j]);
+               }
+
+
+               //
+               // Desasociamos nuestro puntero de la memoria compartida. Suponemos
+               // que p1 (el proceso que la ha creado), la liberará.
+               //
+               if (Id_Memoria != -1)
+               {
+                  shmdt ((char *)Memoria);
+               }
+
+           }      
       len = sizeof(struct sockaddr_in); /* &len: entra y sale el tamano del socket esperado */
       //La llamada al sistema accept() 
       if((ss=accept(s,(struct sockaddr *)&fsock, &len)) < 0){
@@ -92,12 +156,49 @@ int main()
           {
             //Se inicializa el juego
             inicializarJuego(cartas);
-          }    
+               //Se intenta eliminar la memoria compartida
+               //
+               shmdt ((char *)Memoria);
+               shmctl (Id_Memoria, IPC_RMID, (struct shmid_ds *)NULL);            
+
+                  //Se crea memoria compartida
+                  //
+                  // Conseguimos una clave para la memoria compartida. Todos los
+                  // procesos que quieran compartir la memoria, deben obtener la misma
+                  // clave. Esta se puede conseguir por medio de la función ftok.
+                  // A esta función se le pasa un fichero cualquiera que exista y esté
+                  // accesible (todos los procesos deben pasar el mismo fichero) y un
+                  // entero cualquiera (todos los procesos el mismo entero).
+                  //
+                  Clave = ftok ("/bin/ls", 33);
+                  if (Clave == -1)
+                  {
+                     printf("No consigo clave para memoria compartida\n");
+                     exit(0);
+                  }
+
+                  //
+                  // Creamos la memoria con la clave recién conseguida. Para ello llamamos
+                  // a la función shmget pasándole la clave, el tamaño de memoria que
+                  // queremos reservar (100 enteros en nuestro caso) y unos flags.
+                  // Los flags son  los permisos de lectura/escritura/ejecucion 
+                  // para propietario, grupo y otros (es el 777 en octal) y el 
+                  // flag IPC_CREAT para indicar que cree la memoria.
+                  // La función nos devuelve un identificador para la memoria recién
+                  // creada.
+                  //  
+                  Id_Memoria = shmget (Clave, sizeof(int)*100, 0777 | IPC_CREAT);
+                  if (Id_Memoria == -1)
+                  {
+                     printf("No consigo Id para memoria compartida\n");
+                     exit (0);
+                  }            
+          }             
       if (fork() == 0) {
          /* Aqui se ejecuta el proceso hijo */
          /* Cierra el socket incompleto */
          /* se dedica a atender la conexion con el socket completo */
-         close(s);
+         close(s);         
          while(1){ // Transferencia de datos.
             if((len=recv(ss,buf,MAX_LINE-1,0))<=0){
                perror("RECV: "); /* Si len==0 entonces el cliente cerro la conexion */
@@ -119,16 +220,37 @@ int main()
                printf("YA HAY UN GANADOR DEL JUEGO\n");               
                strcpy(resp,"YAGANARON");
             }else{
-               if (numCarta==54)
+               if (numCarta==16)
                {
                   strcpy(resp,"TERMINADO");
                   bandTiempo=2;
-               }else{
+
+                     //
+                     // Terminada de usar la memoria compartida, la liberamos.
+                     //
+                     shmdt ((char *)Memoria);
+                     shmctl (Id_Memoria, IPC_RMID, (struct shmid_ds *)NULL);
+                  }else{
                  printf("Resolviendo carta para el usuario\n");
                  printf("Numero de carta en el arreglo....: %d Valor de contador de cartas...:%d\n", cartas[numCarta],numCarta);             
                  sprintf(resp, "%d",cartas[numCarta]);
+
+                  //
+                  // Una vez creada la memoria, hacemos que uno de nuestros punteros
+                  // apunte a la zona de memoria recién creada. Para ello llamamos a
+                  // shmat, pasándole el identificador obtenido anteriormente y un
+                  // par de parámetros
+                  //
+                  Memoria = (int *)shmat (Id_Memoria, (char *)0, 0);
+                  if (Memoria == NULL)
+                  {
+                     printf("No consigo memoria compartida\n");
+                     exit (0);
+                  } 
+                 Memoria[numCarta] = 1;
+                 printf("ALMACENADO EN MEMORIA COMP....: %d", Memoria[numCarta]);
                  numCarta=numCarta+1; 
-                 bandTiempo=1;
+                 bandTiempo=1;                 
               }
            }
         }  
@@ -147,8 +269,7 @@ int main()
 						tablero = validarInsertarTablero(*numJugadores, &*tabJugador1, &*tabJugador2, &*tabJugador3, &*tabJugador4, &*tabJugador5);				
 						sprintf(resp, "%d",tablero);
 						printf("Tablero asignado %s\n", buf);
-						printf("Tablero del jugador 1..: %d\nTablero del jugador 2..: %d\nTablero del jugador 3..: %d\n", *tabJugador1, *tabJugador2, *tabJugador3);
-
+						printf("Tablero del jugador 1..: %d\nTablero del jugador 2..: %d\nTablero del jugador 3..: %d\n", *tabJugador1, *tabJugador2, *tabJugador3);                 
 					}else{								
                   printf("El numero de jugadores conectados es %d\n", *numJugadores);				
                   printf("Jugador Rechazado!!\n\n");	
@@ -181,10 +302,12 @@ int main()
            {
               *numJugadores=0;
            }
+           
          } /*while */
       } /* if fork */
       else /* Aqui continua el proceso vigia para aceptar otra conexion */
-         close(ss); /* el padre cierra el socket completo que dejo al hijo */
+         close(ss); /* el padre cierra el socket completo que dejo al hijo */            
+
    } /*while*/
 
            return 0;
