@@ -61,7 +61,7 @@ int main()
    bandTiempo=0;
    //Numero de tablero
    int tablero=0;
-   
+   int numeroJugador=0;
    //Declaracion de variables para estado General del Juego
 
    key_t Clave;
@@ -70,7 +70,7 @@ int main()
    int j;
 
    
-   //Creación de socket
+   //Creación de socket | SOCK_NONBLOCK
    if((s=socket(AF_INET,SOCK_STREAM | SOCK_NONBLOCK,0)) < 0) {
       perror("SOCKET: ");
       exit(0);
@@ -135,7 +135,7 @@ int main()
                   printf("Leido %d\n",Memoria[j]);
                }
 
-
+               sleep(3);
                //
                // Desasociamos nuestro puntero de la memoria compartida. Suponemos
                // que p1 (el proceso que la ha creado), la liberará.
@@ -204,15 +204,56 @@ int main()
                perror("RECV: "); /* Si len==0 entonces el cliente cerro la conexion */
                exit(1);
             }
+            buf[len] = '\0';
             //Aqui imprimo la direccion IP del cliente y el puerto al que esta conectado (el plus)
            // printf("La dirección IP que tiene el cliente es: %s \n",inet_ntoa(fsock.sin_addr));
-            
-            //printf("Cadena Recibida: %s\n",buf);
+            char subbuff[8];
+            subbuff[0]=buf[0];
+            subbuff[1]=buf[1];
+            subbuff[2]=buf[2];
+            subbuff[3]=buf[3];
+            subbuff[4]=buf[4];
+            subbuff[5]=buf[5];
+            subbuff[6]=buf[6];
+            subbuff[7] = '\0';
+
+            char subbuffPos[3];
+            subbuffPos[0]=buf[7];
+            subbuffPos[1]=buf[8];
+            subbuffPos[2] = '\0';
+
+            //printf("CADENA ... : %s SUB Cadena Recibida: %s\n numero Final pos....:",buf, subbuffPos);
             if(strcmp(buf,"Salir")==0){
                printf("Termina el servicio por decision del Cliente\n");
                close(ss); //Cerrar la conexión
                exit(0); /* el proceso hijo se mata */
             }
+            else if(strcmp(buf,"ganejuego")==0){// Se recibe el mensaje de Juego Finalizado de alguno de de los cliente
+            printf("YA HAY UN GANADOR -> INDICAR A TODOS LOS NODOS\n");
+            *bandGanador=99;
+            strcpy(resp,"YAGANARON");
+             }
+            else if(strcmp(subbuff,"posicio")==0){// Se recibe el mensaje de
+            printf("GUARDANDO ESTADO DE JUEGO\n");
+                  //
+                  // Una vez creada la memoria, hacemos que uno de nuestros punteros
+                  // apunte a la zona de memoria recién creada. Para ello llamamos a
+                  // shmat, pasándole el identificador obtenido anteriormente y un
+                  // par de parámetros
+                  //
+                  Memoria = (int *)shmat (Id_Memoria, (char *)0, 0);
+                  if (Memoria == NULL)
+                  {
+                     printf("No consigo memoria compartida\n");
+                     exit (0);
+                  } 
+                  int posClient;
+                  posClient=atoi(subbuffPos);
+                  int positition=(numeroJugador-1)*16+posClient;
+                 Memoria[positition] = 1;
+                 printf("VALOR DE POSICION GUARDADA EN MEMORIA........: %d\n", Memoria[positition]);
+            strcpy(resp,"GUARDADO");
+             }         
            else if(strcmp(buf,"damecarta")==0){// Se recibe solicitud de carta por parte del cliente ya conectado			   
 
               if (*bandGanador==99)
@@ -233,39 +274,19 @@ int main()
                   }else{
                  printf("Resolviendo carta para el usuario\n");
                  printf("Numero de carta en el arreglo....: %d Valor de contador de cartas...:%d\n", cartas[numCarta],numCarta);             
-                 sprintf(resp, "%d",cartas[numCarta]);
-
-                  //
-                  // Una vez creada la memoria, hacemos que uno de nuestros punteros
-                  // apunte a la zona de memoria recién creada. Para ello llamamos a
-                  // shmat, pasándole el identificador obtenido anteriormente y un
-                  // par de parámetros
-                  //
-                  Memoria = (int *)shmat (Id_Memoria, (char *)0, 0);
-                  if (Memoria == NULL)
-                  {
-                     printf("No consigo memoria compartida\n");
-                     exit (0);
-                  } 
-                 Memoria[numCarta] = 1;
-                 printf("ALMACENADO EN MEMORIA COMP....: %d", Memoria[numCarta]);
+                 sprintf(resp, "%d",cartas[numCarta]);                 
                  numCarta=numCarta+1; 
                  bandTiempo=1;                 
               }
            }
         }  
-           else if(strcmp(buf,"ganejuego")==0){// Se recibe el mensaje de Juego Finalizado de alguno de de los cliente
-            printf("YA HAY UN GANADOR -> INDICAR A TODOS LOS NODOS\n");
-            *bandGanador=99;
-            strcpy(resp,"YAGANARON");
-         }
             else if(strcmp(buf,"conectame")==0){//       
              *numJugadores=*numJugadores+1;		                     				
 					if(*numJugadores<=3){ //	
 						printf("Un jugador conectado\n");						
 						printf("El numero de jugadores conectados es %d\n", *numJugadores);				
 						printf("Jugador aceptado!!\n\n");
-						//strcpy(nombres[*numJugadores],buf);								
+                  numeroJugador=*numJugadores;
 						tablero = validarInsertarTablero(*numJugadores, &*tabJugador1, &*tabJugador2, &*tabJugador3, &*tabJugador4, &*tabJugador5);				
 						sprintf(resp, "%d",tablero);
 						printf("Tablero asignado %s\n", buf);

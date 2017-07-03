@@ -1,5 +1,6 @@
 #include "Loteria.h"
 #include "crear.h" 
+#include "emergentes.h" 
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -29,6 +30,16 @@ int tablero7[16]={32,43,33,8,11,2,14,44,3,48,7,15,4,16,46,6};
 int tablero8[16]={20,44,48,33,30,26,46,1,23,32,12,14,4,27,19,8};
 int tablero9[16]={50,10,43,23,48,24,14,7,21,4,51,36,6,13,49,12};
 int tablero10[16]={49,6,17,39,18,1,50,11,36,45,16,47,9,28,54,3};
+
+
+   char buf[MAX_LINE];
+   struct sockaddr_in fsock, sname;
+   struct hostent *hent; /* estructura que guarda el llamado a gethostbyname */
+   int s, len;
+   char mensaje[MAX_LINE];
+   char *sl="A1"; 
+   int numTab;   
+
 
 char filenameM[23];	
 static GtkItemFactoryEntry menu_items[] = {
@@ -120,14 +131,9 @@ void Principal()
 
 void Jugar()
 {    
-   char buf[MAX_LINE];
-   struct sockaddr_in fsock, sname;
-   struct hostent *hent; /* estructura que guarda el llamado a gethostbyname */
-   int s, len;
-   char mensaje[MAX_LINE];
-   char *sl="A1"; 
-   int numTab;
-   hent = gethostbyname("localhost");
+	//hent = gethostbyname("132.18.52.11");
+	hent = gethostbyname("localhost");
+
    //Creación de socket 
    if((s=socket(AF_INET,SOCK_STREAM,0)) < 0) {
       perror("SOCKET: ");
@@ -299,15 +305,20 @@ void Jugar()
 				 perror("RECV: ");
 				 close(s);
 				 exit(0);
-			 }
-		   buf[len] = '\0';
+			}
+		    buf[len] = '\0';
 		   
-		   gtk_widget_show_all(GTK_WIDGET(window_c));
-		   //printf("Respuesta..: %s\n\n",buf);
-		   if(strcmp(buf,"COMIENZAN")==0){//   			   
-			   while(1){
+		    gtk_widget_show_all(GTK_WIDGET(window_c));
+		    //printf("Respuesta..: %s\n\n",buf);
+		    if(strcmp(buf,"COMIENZAN")==0){//   			   
+			    while(1){
 					//Asignacion de mensaje
-					strcpy(mensaje,"damecarta");  
+					if(contador==16){
+						printf("Ya gane!!!!!!!\n");	
+						break;	
+					}else{
+
+					strcpy(mensaje,"damecarta");
 					//Envio de datos 
 					if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
 						perror("SEND: ");    
@@ -321,6 +332,19 @@ void Jugar()
 
 					while(gtk_events_pending()) gtk_main_iteration();
 					buf[len] = '\0';
+					if(strcmp(buf,"YAGANARON")==0 && contador!= 2){//   
+						printf("Ya ganaron!!!!!!!\n"); 
+						contador=0;	
+						mostrarGanaron(windowM);					
+						break;
+					}
+					else if(strcmp(buf,"TERMINADO")==0){//  
+						printf("El Juego ha TERMINADO no existe Ningun Ganador\n"); 
+						mostrarTerminado(windowM);
+						break;
+					}else{	
+
+
 					printf("Carta lanzada..: %s\n\n",buf);	
 					//Carta Lanzada 
 					strcpy(filename,"Imagenes/");
@@ -364,16 +388,12 @@ void Jugar()
 							printf("All ");
 					}  
 					*/
-					
-					if(contador==16){
-						printf("Ya gane!!!!!!!\n");
 					}
 					
-												
-					if(strcmp(buf,"YAGANARON")==0){//   
-						break;
-					}						
+					}
+											
 				}
+				break;
 			}else{								
 				while(gtk_events_pending()) gtk_main_iteration();
 				//Esperando a los jugadores
@@ -385,6 +405,7 @@ void Jugar()
 					gtk_widget_show (carta);
 				}
 		   if(strcmp(buf,"NINGUNAOP")==0){//   
+		   		printf("No hubo ganador!!!!!!!\n");
 			break;
 			}		
 			cont++;
@@ -453,10 +474,34 @@ void marcarCarta(int pos){
 	
 	//while(gtk_events_pending()) gtk_main_iteration();
 	printf("Posicion..........: %d\n", pos );
-	if(tabJuego[pos] == carServidor){
-		
+	if(tabJuego[pos] == carServidor){		
 		tabAux[pos]=1;
-		contador++;
+		contador=contador+1;
+		//Se envia posicion ocupada al servidor			
+			sprintf(mensaje, "posicio%d",pos);
+			//Envio de datos 
+			if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
+			perror("SEND: ");    
+			}			
+			//Transferencia de datos 
+			if( (len=recv(s,buf,MAX_LINE-1,0))<= 0 ){
+				 perror("RECV: ");
+				 close(s);
+				 exit(0);
+			}
+		    buf[len] = '\0';
+		    printf("Respuesta al marcarCarta..: %s\n\n",buf);
+
+		if(contador==16){
+			printf("Ya gane!!!!!!!\n");
+			//Asignacion de mensaje
+			strcpy(mensaje,"ganejuego");  
+			//Envio de datos 
+			if( send(s,mensaje,strlen(mensaje),0) < strlen(mensaje) ){
+			perror("SEND: ");    
+			}	
+			mostrarGane(windowM);				
+		}
 		switch(pos)
 	{
 		case 0:
